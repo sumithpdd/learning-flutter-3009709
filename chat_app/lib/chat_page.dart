@@ -6,7 +6,8 @@ import 'package:chat_app/models/chat_message_entity.dart';
 import 'package:chat_app/widgets/chat_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:http/http.dart' as http;
+import 'models/image_model.dart';
 import 'widgets/chat_buddle.dart';
 
 class ChatPage extends StatefulWidget {
@@ -54,6 +55,22 @@ class _ChatPageState extends State<ChatPage> {
   onMessageSent(ChatMessageEntity entity) {
     _messages.add(entity);
     setState(() {});
+  }
+
+  _getNetworkImages() async {
+    var endpointUrl = Uri.parse('https://pixelford.com/api2/images');
+
+    final response = await http.get(endpointUrl);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decodedList = jsonDecode(response.body) as List;
+
+      final List<PixelfordImage> _imageList = decodedList.map((listItem) {
+        return PixelfordImage.fromJson(listItem);
+      }).toList();
+
+      print(_imageList[0].urlFullSize);
+    }
   }
 
   @override

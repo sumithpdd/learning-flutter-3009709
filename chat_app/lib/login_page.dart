@@ -65,11 +65,16 @@ class LoginPage extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Image.asset(
-                'assets/illustration.png',
-                height: 200,
-              ),
 
+              Container(
+                height: 200,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fitWidth,
+                        image: AssetImage('assets/illustration.png')),
+                    borderRadius: BorderRadius.circular(24)),
+              ),
               Form(
                 key: _formKey,
                 child: Column(

@@ -1,21 +1,47 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:chat_app/models/chat_message_entity.dart';
 import 'package:flutter/material.dart';
 
-class ChatInput extends StatelessWidget {
+import 'network_image_picker_body.dart';
+
+class ChatInput extends StatefulWidget {
   final Function(ChatMessageEntity) onSubmit;
 
   ChatInput({Key? key, required this.onSubmit}) : super(key: key);
+
+  @override
+  State<ChatInput> createState() => _ChatInputState();
+}
+
+class _ChatInputState extends State<ChatInput> {
+  String _selectedImageUrl = '';
+
   final chatMessageController = TextEditingController();
-  void sendButtonPressed() {
-    print(chatMessageController.value);
+
+  void onSendButtonPressed() {
+    print('ChatMessage: ${chatMessageController.text}');
     final newChatMessage = ChatMessageEntity(
         text: chatMessageController.text,
-        id: "1234",
-        createdAt: DateTime.now().microsecondsSinceEpoch,
-        author: Author(userName: "sumith"));
-    onSubmit(newChatMessage);
+        id: "244",
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        author: Author(userName: 'sumith'));
+
+    //TODO: Check for image, and append it to the chat object
+
+    if (_selectedImageUrl.isNotEmpty) {
+      newChatMessage.imageUrl = _selectedImageUrl;
+    }
+    widget.onSubmit(newChatMessage);
+
+    chatMessageController.clear();
+    _selectedImageUrl = '';
+    setState(() {});
+  }
+
+  void onImagePicked(String newImageUrl) {
+    setState(() {
+      _selectedImageUrl = newImageUrl;
+    });
+    Navigator.of(context).pop();
   }
 
   @override
@@ -25,38 +51,52 @@ class ChatInput extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return NetworkImagePickerBody(
+                      onImageSelected: onImagePicked,
+                    );
+                  });
+            },
             icon: Icon(
               Icons.add,
               color: Colors.white,
             ),
           ),
           Expanded(
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: 5,
-              minLines: 1,
-              controller: chatMessageController,
-              textCapitalization: TextCapitalization.sentences,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                  hintText: "Type your message",
-                  hintStyle: TextStyle(
-                    color: Colors.blueGrey,
-                  ),
-                  border: InputBorder.none),
-            ),
-          ),
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                keyboardType: TextInputType.multiline,
+                maxLines: 5,
+                minLines: 1,
+                controller: chatMessageController,
+                textCapitalization: TextCapitalization.sentences,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                    hintText: "Type your message",
+                    hintStyle: TextStyle(color: Colors.blueGrey),
+                    border: InputBorder.none),
+              ),
+              if (_selectedImageUrl.isNotEmpty)
+                Image.network(
+                  _selectedImageUrl,
+                  height: 50,
+                ),
+            ],
+          )),
           IconButton(
-            onPressed: sendButtonPressed,
+            onPressed: onSendButtonPressed,
             icon: Icon(
               Icons.send,
               color: Colors.white,
             ),
-          )
+          ),
         ],
       ),
-      height: 100,
       decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),

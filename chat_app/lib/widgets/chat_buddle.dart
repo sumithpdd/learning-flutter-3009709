@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 class ChatBubble extends StatelessWidget {
   final ChatMessageEntity entity;
   final Alignment alignment;
-  const ChatBubble({Key? key, required this.entity, required this.alignment})
+
+  const ChatBubble({Key? key, required this.alignment, required this.entity})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    bool isAuthor = entity.author.userName == "sumith";
+
     return Align(
       alignment: alignment,
       child: Container(
@@ -21,25 +24,27 @@ class ChatBubble extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              entity.text,
+              '${entity.text}',
               style: TextStyle(fontSize: 20, color: Colors.white),
             ),
             if (entity.imageUrl != null)
-              Image.network(
-                entity.imageUrl!,
+              Container(
                 height: 200,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    image:
+                        DecorationImage(image: NetworkImage(entity.imageUrl!)),
+                    borderRadius: BorderRadius.circular(12)),
               )
           ],
         ),
-        margin: EdgeInsets.all(50),
+        margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-          ),
-        ),
+            color: isAuthor ? Theme.of(context).primaryColor : Colors.black87,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+                bottomLeft: Radius.circular(12))),
       ),
     );
   }
