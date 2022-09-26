@@ -3,7 +3,13 @@
 import 'dart:js';
 
 import 'package:chat_app/chat_page.dart';
+import 'package:chat_app/utils/spaces.dart';
+import 'package:chat_app/utils/textfield_styles.dart';
+import 'package:chat_app/widgets/login_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:social_media_buttons/social_media_button.dart';
+import 'package:social_media_buttons/social_media_buttons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -59,11 +65,17 @@ class LoginPage extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
+              Image.asset(
+                'assets/illustration.png',
+                height: 200,
+              ),
+
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    TextFormField(
+                    LoginTextField(
+                      hintText: "Enter your UserName",
                       validator: ((value) {
                         if (value != null &&
                             value.isNotEmpty &&
@@ -74,25 +86,18 @@ class LoginPage extends StatelessWidget {
                         }
                         return null;
                       }),
-                      controller: userNameController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: "UserName",
-                      ),
+                      textEditingController: userNameController,
                     ),
-                    SizedBox(height: 24),
-                    TextFormField(
-                      controller: passwordController,
+                    verticalSpacing(24),
+                    LoginTextField(
+                      textEditingController: passwordController,
                       obscureText: true,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: "Password",
-                      ),
+                      hintText: 'Enter your password',
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              verticalSpacing(24),
               ElevatedButton(
                   onPressed: () => {loginUser(context)},
                   child: Text(
@@ -103,7 +108,27 @@ class LoginPage extends StatelessWidget {
                     ),
                   )),
               //   OutlinedButton(onPressed: () {}, child: FlutterLogo()),
-              TextButton(onPressed: () {}, child: Text('www.sumithpd.com')),
+              TextButton(
+                  onPressed: () async {
+                    if (!await launchUrl(
+                        Uri.parse('https://www.sumithpd.com'))) {
+                      throw 'Could not launch website';
+                    }
+                  },
+                  child: Text('www.sumithpd.com')),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SocialMediaButton(
+                    url: 'https://twitter.com/sumithpdd',
+                    iconData: SocialMediaIcons.twitter,
+                  ),
+                  SocialMediaButton(
+                    url: 'https://linkedin.com/in/sumithdamodaran',
+                    iconData: SocialMediaIcons.linkedin,
+                  )
+                ],
+              )
             ],
           ),
         ),

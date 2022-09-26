@@ -1,11 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:chat_app/models/chat_message_entity.dart';
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
-  final String message;
+  final ChatMessageEntity entity;
   final Alignment alignment;
-  const ChatBubble({Key? key, required this.message, required this.alignment})
+  const ChatBubble({Key? key, required this.entity, required this.alignment})
       : super(key: key);
 
   @override
@@ -13,18 +14,21 @@ class ChatBubble extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: Container(
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
         padding: EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              message,
+              entity.text,
               style: TextStyle(fontSize: 20, color: Colors.white),
             ),
-            Image.network(
-              'https://cdn.pixabay.com/photo/2019/09/07/02/56/background-4457839_960_720.png',
-              height: 200,
-            )
+            if (entity.imageUrl != null)
+              Image.network(
+                entity.imageUrl!,
+                height: 200,
+              )
           ],
         ),
         margin: EdgeInsets.all(50),
