@@ -1,6 +1,8 @@
 import 'package:chat_app/models/chat_message_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../services/auth_service.dart';
 import 'network_image_picker_body.dart';
 
 class ChatInput extends StatefulWidget {
@@ -17,13 +19,14 @@ class _ChatInputState extends State<ChatInput> {
 
   final chatMessageController = TextEditingController();
 
-  void onSendButtonPressed() {
+  void onSendButtonPressed() async {
+    String? userName = await context.read<AuthService>().getUserName();
     print('ChatMessage: ${chatMessageController.text}');
     final newChatMessage = ChatMessageEntity(
         text: chatMessageController.text,
         id: "244",
         createdAt: DateTime.now().millisecondsSinceEpoch,
-        author: Author(userName: 'sumith'));
+        author: Author(userName: userName!));
 
     //TODO: Check for image, and append it to the chat object
 

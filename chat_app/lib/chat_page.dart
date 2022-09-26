@@ -3,16 +3,17 @@
 import 'dart:convert';
 
 import 'package:chat_app/models/chat_message_entity.dart';
+import 'package:chat_app/services/auth_service.dart';
 import 'package:chat_app/widgets/chat_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'models/image_model.dart';
 import 'widgets/chat_buddle.dart';
 
 class ChatPage extends StatefulWidget {
-  final String userName;
-  ChatPage({Key? key, required this.userName}) : super(key: key);
+  ChatPage({Key? key}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -81,14 +82,22 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userName = context.watch<AuthService>().getUserName();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text("Hi ${widget.userName}"),
+        title: Text("Hi ${userName}"),
         actions: [
           IconButton(
               onPressed: () {
                 // Navigator.maybePop(context);
+                context.read<AuthService>().updateUserName("Newname");
+              },
+              icon: Icon(Icons.update)),
+          IconButton(
+              onPressed: () {
+                // Navigator.maybePop(context);
+                context.read<AuthService>().logoutUser();
                 Navigator.popAndPushNamed(context, '/');
               },
               icon: Icon(Icons.logout)),
@@ -101,7 +110,8 @@ class _ChatPageState extends State<ChatPage> {
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
                     return ChatBubble(
-                        alignment: _messages[index].author.userName == 'sumith'
+                        alignment: _messages[index].author.userName ==
+                                context.read<AuthService>().getUserName()
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         entity: _messages[index]);
